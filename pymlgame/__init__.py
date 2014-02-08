@@ -14,5 +14,6 @@ from pymlgame.events import EventListener
 from pymlgame.screen import Screen
 from pymlgame.clock import Clock
 from pymlgame.surface import Surface
+from pymlgame.menu import Menu
 
 events = EventListener()
