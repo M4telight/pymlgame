@@ -29,5 +29,8 @@ class Clock(object):
     def tick(self, fps):
         """
         Let the Clock tick x times per second.
+
+        @type  fps: int
+        @param fps: The frame rate that you want.
         """
         time.sleep(1.0/fps)

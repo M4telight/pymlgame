@@ -25,6 +25,15 @@ class Screen(object):
     def __init__(self, host, port, width=40, height=16):
         """
         Create a screen with default size and fill it with black pixels.
+
+        @type  host: str
+        @param host: Hostname or IP address of the Mate Light screen.
+        @type  port: int
+        @param port: Port of the Mate Light screen.
+        @type  width: int
+        @param width: The width in bottles of the Mate Light screen.
+        @type  height: int
+        @param height: The height in bottles of the Mate Light screen.
         """
         self.host = host
         self.port = port
@@ -36,7 +45,7 @@ class Screen(object):
 
     def reset(self):
         """
-        Fill the screen with black pixels
+        Fill the screen with black pixels.
         """
         surface = pymlgame.Surface(self.width, self.height)
         surface.fill(pymlgame.BLACK)
@@ -44,7 +53,7 @@ class Screen(object):
 
     def update(self):
         """
-        Sends the current screen contents to Mate Light
+        Sends the current screen contents to Mate Light.
         """
         display_data = []
         for y in range(self.height):
@@ -60,7 +69,13 @@ class Screen(object):
 
     def blit(self, surface, pos=(0, 0)):
         """
-        Blits a surface on the screen at pos
+        Blits a surface on the screen at pos.
+
+        @type  surface: pymlgame.Surface
+        @param surface: The surface that will be blitted.
+        @type  pos: (int, int)
+        @param pos: (x, y) coordinates where the upper left corner of
+                    the surface should be placed.
         """
         for x in range(surface.width):
             for y in range(surface.height):
@@ -69,6 +84,15 @@ class Screen(object):
                     self.matrix[point[0]][point[1]] = surface.matrix[x][y]
 
     def point_on_screen(self, pos):
+        """
+        Checks if the given point is outside of the visible area of the screen.
+
+        @type  pos: (int, int)
+        @param pos: (x, y) coordinates of the point to check.
+        @rtype: bool
+        @return: Return True if the point in in the visible area and False if
+                 it's not.
+        """
         if 0 <= pos[0] < self.width and 0 <= pos[1] < self.height:
             return True
         else:

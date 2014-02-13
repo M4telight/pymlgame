@@ -14,3 +14,4 @@ from pymlgame.screen import Screen
 from pymlgame.clock import Clock
 from pymlgame.surface import Surface
 from pymlgame.controller import Controller
+from pymlgame.font import Font

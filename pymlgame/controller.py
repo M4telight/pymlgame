@@ -171,6 +171,9 @@ class Event(object):
     Represents an event which has a type and optionally a uid and a button.
     """
     def __init__(self):
+        """
+        Creates an empty event.
+        """
         self.type = None
         self.button = None
         self.uid = None

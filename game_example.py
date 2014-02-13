@@ -19,6 +19,8 @@ __maintainer__ = 'Ricardo Band'
 __email__ = 'me@xengi.de'
 __status__ = 'Development'
 
+import sys
+
 import pymlgame
 
 
@@ -29,6 +31,15 @@ class Game(object):
     def __init__(self, host, port, width, height):
         """
         Create a screen and define some game specific things.
+
+        @type  host: str
+        @param host: Hostname or IP address of Mate Light.
+        @type  port: int
+        @param port: Port of Mate Light.
+        @type  width: int
+        @param width: Width of Mate Light in bottles.
+        @type  height: int
+        @param height: Height of Mate Light in bottles.
         """
         self.host = host
         self.port = port
@@ -141,6 +152,7 @@ class Game(object):
         # don't forget to quit the controller process if your game ends.
         # In future releases this will be done automatically.
         self.ctlr.quit()
+        sys.exit(0)
 
 
 if __name__ == '__main__':

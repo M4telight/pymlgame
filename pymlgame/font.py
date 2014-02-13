@@ -46,8 +46,8 @@ class Font(object):
         """
         Generates the surface out of the given text.
 
-        @rtype:   pymlgame.Surface
-        @return:  The generated surface of the text.
+        @rtype:  pymlgame.Surface
+        @return: The generated surface of the text.
         """
         #TODO: make multiline text possible
         surface = pymlgame.Surface(len(self.text) * 5 + len(self.text), 5)
@@ -63,8 +63,8 @@ class Font(object):
         """
         Returns a surface with the rendered char.
 
-        @rtype:   pymlgame.Surface
-        @return:  The generated surface of the char.
+        @rtype:  pymlgame.Surface
+        @return: The generated surface of the char.
         """
         with open(self.font) as font:
             surface = pymlgame.Surface(5, 5)

@@ -18,6 +18,7 @@ KEYUP = 0
 KEYDOWN = 1
 NEWCTLR = 2
 PING = 3
+NAME = 4
 
 # controller inputs
 CTLR_UP = 0

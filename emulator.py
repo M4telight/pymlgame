@@ -32,6 +32,15 @@ class Emu(object):
         """
         Creates a screen with the given size, generates the matrix for the
         Mate bottles and binds the socket for incoming frames.
+
+        @type  width: int
+        @param width: Defines the screen width in bottles.
+        @type  height: int
+        @param height: Defines the screen height in bottles.
+        @type  ip: str
+        @param ip: Hostname or IP address that will be bind.
+        @type  port: int
+        @param port: Port that will be used.
         """
         self.width = width
         self.height = height
@@ -95,6 +104,9 @@ class Emu(object):
                 self.render()
         except KeyboardInterrupt:
             pass
+
+        pygame.quit()
+        sys.exit(0)
 
 
 if __name__ == '__main__':

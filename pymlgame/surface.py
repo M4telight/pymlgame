@@ -25,6 +25,11 @@ class Surface(object):
     def __init__(self, width, height):
         """
         Create a surface with default size and fill it with black pixels.
+
+        @type  width: int
+        @param width: The width in bottles of the new Surface.
+        @type  height: int
+        @param height: The height in bottles of the new Surface.
         """
         self.width = width
         self.height = height
@@ -34,6 +39,11 @@ class Surface(object):
     def fill(self, color, brightness=0.1):
         """
         Fill the whole screen with the given color.
+
+        @type  color: (int, int, int)
+        @param color: The color which will fill the surface.
+        @type  brightness: float
+        @param brightness: Adjust the colors by this brightness level.
         """
         color = self.get_color(color, brightness)
         self.matrix = [[color for _ in range(self.height)]
@@ -42,6 +52,13 @@ class Surface(object):
     def draw_dot(self, pos, color, brightness=0.1):
         """
         Draw one single dot with the given color on the screen.
+
+        @type  pos: (int, int)
+        @param pos: (x, y) coordinates where the dot should be placed.
+        @type  color: (int, int, int)
+        @param color: The color of the dot.
+        @type  brightness: float
+        @param brightness: Adjust the colors by this brightness level.
         """
         realcolor = self.get_color(color, brightness)
         if 0 <= pos[0] < self.width and 0 <= pos[1] < self.height:
@@ -50,6 +67,15 @@ class Surface(object):
     def draw_line(self, start, end, color, brightness=0.1):
         """
         Draw a line with the given color on the screen.
+
+        @type  start: (int, int)
+        @param start: (x, y) coordinates where the line should start.
+        @type  end: (int, int)
+        @param end: (x, y) coordinates where the line should end.
+        @type  color: (int, int, int)
+        @param color: The color of the line.
+        @type  brightness: float
+        @param brightness: Adjust the colors by this brightness level.
         """
         def dist(p, a, b):
             return abs((b[0] - a[0]) * (a[1] - p[1]) - (a[0] - p[0]) *
@@ -66,7 +92,21 @@ class Surface(object):
 
     def draw_rect(self, pos, size, color, fillcolor=None, brightness=0.1):
         """
-        Draw a rectangle with the given color on the screen and optionally fill it with fillcolor.
+        Draw a rectangle with the given color on the screen and optionally fill
+        it with fillcolor.
+
+        @type  pos: (int, int)
+        @param pos: (x, y) coordinates where the upper left corner of the
+                    rectangle should be placed.
+        @type  size: (int, int)
+        @param size: The width and height of the rectangle that will be
+                     created.
+        @type  color: (int, int, int)
+        @param color: The border color of the rectangle.
+        @type  fillcolor: (int, int, int)
+        @param fillcolor: The inner color of the rectangle.
+        @type  brightness: float
+        @param brightness: Adjust the colors by this brightness level.
         """
         # draw top and botton line
         for x in range(size[0]):
@@ -88,6 +128,18 @@ class Surface(object):
         """
         Draw a circle with the given color on the screen and optionally fill it
         with fillcolor.
+
+        @type  pos: (int, int)
+        @param pos: (x, y) coordinates where the upper left corner of the
+                    circle should be placed.
+        @type  radius: int
+        @param radius: The radius of the circle that will be created.
+        @type  color: (int, int, int)
+        @param color: The border color of the circle.
+        @type  fillcolor: (int, int, int)
+        @param fillcolor: The inner color of the circle.
+        @type  brightness: float
+        @param brightness: Adjust the colors by this brightness level.
         """
         #TODO: This still produces rubbish but it's on a good way to success
         def dist(d, p, r):
@@ -111,6 +163,12 @@ class Surface(object):
     def blit(self, surface, pos=(0, 0)):
         """
         Blits a surface on this surface at pos
+
+        @type  surface: pymlgame.Surface
+        @param surface: The surface that will be blitted.
+        @type  pos: (int, int)
+        @param pos: (x, y) coordinates where the upper left corner of
+                    the surface should be placed.
         """
         for x in range(surface.width):
             for y in range(surface.height):
@@ -122,6 +180,11 @@ class Surface(object):
     def replace_color(self, before, after):
         """
         Replaces a color on a surface with another one.
+
+        @type  before: (int, int, int)
+        @param before: The color that should be changed.
+        @type  after: (int, int, int)
+        @param after: The color which will replace the old one.
         """
         for x in range(self.width):
             for y in range(self.height):
@@ -131,6 +194,13 @@ class Surface(object):
     @staticmethod
     def get_color(color, brightness=0.1):
         """
-        Returns the color with applied brightness level
+        Returns the color with applied brightness level.
+
+        @type  color: (int, int, int)
+        @param color: The original color.
+        @type  brightness: float
+        @param brightness: The level of brightness in percent.
+        @rtype: (int, int, int)
+        @return: The new color with adjusted brightness.
         """
         return tuple([math.floor(val * brightness) for val in color])
