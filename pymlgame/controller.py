@@ -27,7 +27,12 @@ class Controller(object):
     """
     def __init__(self, host, port):
         """
-        Creates a controller deamon
+        Creates a controller thread.
+
+        @type  host: str
+        @param host: The host of Mate Light.
+        @type  host: int
+        @param host: The port of Mate Light.
         """
         self.host = host
         self.port = port
@@ -63,6 +68,9 @@ class Controller(object):
     def init(self):
         """
         Get an uid for your controller.
+
+        @rtype:   int
+        @return:  A unique id.
         """
         uid = self._next_uid
         self._next_uid += 1
@@ -70,17 +78,39 @@ class Controller(object):
         event.type = pymlgame.NEWCTLR
         event.uid = uid
         self.queue.append(event)
+
         return uid
+
+    def name(self, uid, name):
+        """
+        Set the players name.
+
+        @type  uid: int
+        @param uid: The unique id that the controller got with init().
+        @type  name: str
+        @param name: The name the player wants to have in the game.
+        """
+        event = Event()
+        event.type = pymlgame.NAME
+        event.data = name
+        event.uid = uid
+        self.queue.append(event)
 
     def get_button_keys(self):
         """
         Return a list of possible buttons.
+
+        @rtype:   list[str]
+        @return:  A list of buttons you can trigger.
         """
         return list(self._mapping.keys())
 
     def get_event_keys(self):
         """
         Return a list of possible events.
+
+        @rtype:   list[str]
+        @return:  A list of events you can trigger.
         """
         return list(self._events.keys())
 
@@ -89,6 +119,9 @@ class Controller(object):
         Just say hello so that pymlgame knows that your controller is still
         in use. Otherwise the game could delete unused controlers after a
         while. But this has to be implemented by the game.
+
+        @type  uid: int
+        @param uid: The unique id that the controller got with init().
         """
         event = Event()
         event.type = pymlgame.PING
@@ -98,6 +131,13 @@ class Controller(object):
     def trigger_button(self, uid, event, button):
         """
         Triggers the given button event.
+
+        @type  uid: int
+        @param uid: The unique id that the controller got with init().
+        @type  event: str
+        @param event: The event identifier i.e. 'KeyUp' or 'KeyDown'.
+        @type  button: str
+        @param button: The button identifier i.e. 'R1' or 'Start'.
         """
         if self._events[event] >= 0 and self._mapping[button] >= 0:
             ev = Event()
@@ -109,6 +149,10 @@ class Controller(object):
     def get_events(self):
         """
         Empty current event queue and send it's contents to the game.
+
+        @rtype:   list[pymlgame.controller.Event]
+        @return:  A list of events that happened since last time this
+                  function got called.
         """
         ret = []
         while len(self.queue) != 0:
@@ -130,3 +174,4 @@ class Event(object):
         self.type = None
         self.button = None
         self.uid = None
+        self.data = None
