@@ -25,9 +25,20 @@ import jsonrpclib
 
 
 class Controller(object):
-    def __init__(self, host, port):
+    def __init__(self, host, port, v=False):
+        """
+        Create game that takes controller inputs and emits JSONRPC calls.
+
+        @type  host: str
+        @param host: Hostname or IP address.
+        @type  port: int
+        @param port: Port number of pymlgame.
+        @type  v: bool
+        @param v: Turn verbosity on or off.
+        """
         self.host = host
         self.port = port
+        self.v = v
         pygame.init()
         self.joysticks = [[pygame.joystick.Joystick(j), None, None]
                           for j in range(pygame.joystick.get_count())]
@@ -36,9 +47,12 @@ class Controller(object):
         self.clock = pygame.time.Clock()
         self.server = jsonrpclib.Server('http://' + self.host + ':' +
                                         str(self.port))
+        foundone = False
         for joy in self.joysticks:
             joy[0].init()
             joy[1] = self.server.init()
+            # define some mappings for compatible controllers
+            # for now only the XBOX 360 Wireless Controller is supported
             if joy[0].get_name() == 'Xbox 360 Wireless Receiver':
                 joy[2] = {0: 'A',
                           1: 'B',
@@ -52,39 +66,60 @@ class Controller(object):
                           12: 'Right',
                           13: 'Up',
                           14: 'Down'}
+                foundone = True
+            else:
+                print('Sorry but this Controller is not supported yet. (',
+                      joy[0].get_name(), ')')
+
+        if not foundone:
+            print('Sorry no compatible controllers found on your system.')
+            self.quit(0)
 
     def handle_events(self):
+        """
+        Gets events from pygame and checks if there is some interesting like
+        pressed controller buttons.
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.joystick.quit()
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
+                self.quit(0)
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.event.post(pygame.event.Event(pygame.QUIT))
-            if event.type == pygame.JOYBUTTONDOWN:
-                print('joy', self.joysticks[event.joy][0].get_name(),
-                      '(uid:', self.joysticks[event.joy][1], ')button pressed:',
-                      event.button)
+            elif event.type == pygame.JOYBUTTONDOWN:
+                if self.v:
+                    print('joy', self.joysticks[event.joy][0].get_name(),
+                          '(uid:', self.joysticks[event.joy][1],
+                          ')button pressed:', event.button)
                 self.server.trigger_button(self.joysticks[event.joy][1],
                                            'KeyDown',
                                            self.joysticks[event.joy][2][event.button])
-            if event.type == pygame.JOYBUTTONUP:
-                print('joy', self.joysticks[event.joy][0].get_name(),
-                      '(uid:', self.joysticks[event.joy][1], ')button released:',
-                      event.button)
+            elif event.type == pygame.JOYBUTTONUP:
+                if self.v:
+                    print('joy', self.joysticks[event.joy][0].get_name(),
+                          '(uid:', self.joysticks[event.joy][1],
+                          ')button released:', event.button)
                 self.server.trigger_button(self.joysticks[event.joy][1],
                                            'KeyUp',
                                            self.joysticks[event.joy][2][event.button])
 
     def update(self):
+        """
+        This thing doesn't do anything.
+        """
         pass
 
     def render(self):
+        """
+        Updates the screen and sends it to the output.
+        """
         pygame.display.update()
         pygame.display.flip()
 
     def gameloop(self):
+        """
+        Contains the mainloop which runs the whole game.
+        """
         try:
             while True:
                 self.handle_events()
@@ -93,7 +128,20 @@ class Controller(object):
         except KeyboardInterrupt:
             pass
 
+        self.quit(0)
+
+    def quit(self, exitcode=0):
+        """
+        Correctly exit all this stuff.
+
+        @type  exitcode: int
+        @param exitcode: The exit code i.e. 0 for clean exit.
+        """
+        pygame.joystick.quit()
+        pygame.quit()
+        sys.exit(exitcode)
+
 
 if __name__ == '__main__':
-    CTLR = Controller('127.0.0.1', 1338)
+    CTLR = Controller('127.0.0.1', 1338, True if '-v' in sys.argv else False)
     CTLR.gameloop()
