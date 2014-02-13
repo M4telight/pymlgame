@@ -65,6 +65,10 @@ class Font(object):
 
         @rtype:  pymlgame.Surface
         @return: The generated surface of the char.
+        @type  char: str
+        @param char: The char that should be read from the font file.
+        @rtype:  pymlgame.Surface
+        @return: The surface of the rendered char.
         """
         with open(self.font) as font:
             surface = pymlgame.Surface(5, 5)
