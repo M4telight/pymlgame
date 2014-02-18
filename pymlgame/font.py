@@ -13,7 +13,9 @@ __maintainer__ = 'Ricardo Band'
 __email__ = 'me@xengi.de'
 __status__ = 'Development'
 
-import math
+import os
+
+from PIL import Image
 
 import pymlgame
 
@@ -36,7 +38,9 @@ class Font(object):
         @param brightness: Adjust the brightness of the colors.
         """
         self.text = text
-        self.font = 'default'
+        self.font = 'font5x5.png'
+        self._chars = 'abcdefghijklmnopqrstuvwxyz0123456789!?# ()[].,' \
+                      '-_:;+=H><*~\'"/\\%°'
         self.foreground = foreground
         self.background = background
         self.brightness = brightness
@@ -54,8 +58,7 @@ class Font(object):
         surface.fill(self.background, self.brightness)
 
         for i in range(len(self.text)):
-            char = self._read_char(self.text[i])
-            surface.blit(char, (i * 5 + i, 0))
+            surface.blit(self._read_char(self.text[i]), (i * 5 + i, 0))
 
         return surface
 
@@ -70,7 +73,17 @@ class Font(object):
         @rtype:  pymlgame.Surface
         @return: The surface of the rendered char.
         """
-        with open(self.font) as font:
-            surface = pymlgame.Surface(5, 5)
+        surface = pymlgame.Surface(5, 5)
+        char_pos = self._chars.find(char) + 1
+        char_x = (char_pos % 8) * 5 + (char_pos % 8)
+        char_y = int(char_pos / 8) * 5 + int(char_pos / 8)
+        img = Image.open(os.path.join('pymlgame', self.font))
+        matrix = img.load()
+        for x in range(5):
+            for y in range(5):
+                if matrix[x + char_x, y + char_y] == pymlgame.BLACK:
+                    surface.matrix[x][y] = self.foreground
+                else:
+                    surface.matrix[x][y] = self.background
 
-        return self.surface
+        return surface
