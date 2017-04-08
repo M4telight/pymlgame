@@ -7,20 +7,6 @@ pymlgame - Mate Light emulator
 
 This little program emulates the awesome Mate Light, just in case you're not on c-base space station but want to send
 something to it.
-
-Usage:
-  emulator.py [-w=<px>] [-h=<px>] [--host=<ip>] [--port=<num>] [--dot=<size>]
-  emulator.py --help
-  emulator.py --version
-
-Options:
-  --help         Show this screen.
-  --version      Show version.
-  -w=<px>        Width in pixels [default: 40].
-  -h=<px>        Height in pixels [default: 16].
-  --host=<host>  Bind to IP address [default: 127.0.0.1].
-  --port=<port>  Bind to Port [default: 1337].
-  --dot=<px>     Size of dots in pixels [default: 10].
 """
 
 __author__ = 'Ricardo Band'
@@ -36,13 +22,12 @@ import sys
 import socket
 
 import pygame
-from docopt import docopt
-
 
 class Emu(object):
     """
     The Emulator is a simple pygame game.
     """
+
     def __init__(self, width=40, height=16, ip='127.0.0.1', port=1337, dotsize=10):
         """
         Creates a screen with the given size, generates the matrix for the Mate bottles and binds the socket for
@@ -52,7 +37,8 @@ class Emu(object):
         self.height = height
         self.dotsize = dotsize
         pygame.init()
-        self.screen = pygame.display.set_mode([self.width * self.dotsize, self.height * self.dotsize])
+        self.screen = pygame.display.set_mode(
+            [self.width * self.dotsize, self.height * self.dotsize])
         pygame.display.set_caption("Mate Light Emu")
         self.clock = pygame.time.Clock()
         self.matrix = []
@@ -69,7 +55,7 @@ class Emu(object):
         Grab the next frame and put it on the matrix.
         """
         data, addr = self.sock.recvfrom(self.packetsize)
-        matrix = data.strip())
+        matrix = data.strip()
         if len(matrix) == self.packetsize:
             self.matrix = matrix[:-4]
 
@@ -81,10 +67,11 @@ class Emu(object):
         for x in range(self.width):
             for y in range(self.height):
                 pixel = y * self.width * 3 + x * 3
-                #TODO: sometimes the matrix is not as big as it should
+                # TODO: sometimes the matrix is not as big as it should
                 if pixel < pixels:
                     pygame.draw.circle(self.screen,
-                                       (self.matrix[pixel], self.matrix[pixel + 1], self.matrix[pixel + 2]),
+                                       (self.matrix[pixel], self.matrix[
+                                        pixel + 1], self.matrix[pixel + 2]),
                                        (x * self.dotsize + self.dotsize // 2, y * self.dotsize + self.dotsize // 2), self.dotsize // 2, 0)
 
     def render(self):
@@ -115,6 +102,19 @@ class Emu(object):
 
 
 if __name__ == '__main__':
-    ARGS = docopt(__doc__, version=__version__)
-    EMU = Emu(int(ARGS['-w']), int(ARGS['-h']), ARGS['--host'], int(ARGS['--port']), int(ARGS['--dot']))
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Emulator for PyMLG")
+    parser.add_argument('host', type=str, help='remote host to connect to')
+    parser.add_argument('--port', type=int, default=1337,
+                        help='port to run on')
+    parser.add_argument('--width', type=int, default=40,
+                        help='width of matelight')
+    parser.add_argument('--height', type=int, default=16,
+                        help='height of matelight')
+    parser.add_argument('--dot', type=int, default=10, help='size of the dot')
+    args = parser.parse_args()
+    print(args)
+
+    EMU = Emu(args.width, args.height, args.host,  args.port, args.dot)
     EMU.gameloop()
