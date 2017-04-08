@@ -23,6 +23,7 @@ import socket
 
 import pygame
 
+
 class Emu(object):
     """
     The Emulator is a simple pygame game.
@@ -105,7 +106,8 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description="Emulator for PyMLG")
-    parser.add_argument('host', type=str, help='remote host to connect to')
+    parser.add_argument('--host', type=str,
+                        default='localhost', help='host name to bind to')
     parser.add_argument('--port', type=int, default=1337,
                         help='port to run on')
     parser.add_argument('--width', type=int, default=40,
@@ -114,7 +116,6 @@ if __name__ == '__main__':
                         help='height of matelight')
     parser.add_argument('--dot', type=int, default=10, help='size of the dot')
     args = parser.parse_args()
-    print(args)
 
     EMU = Emu(args.width, args.height, args.host,  args.port, args.dot)
     EMU.gameloop()
