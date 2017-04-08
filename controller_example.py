@@ -182,7 +182,7 @@ class Controller(object):
 
 
 if __name__ == '__main__':
-    ctlr = Controller('127.0.0.1', 1338, '0.0.0.0', 1338)
+    ctlr = Controller('127.0.0.1', 1338, '0.0.0.0', 1339)
     try:
         while True:
             ctlr.handle_inputs()
