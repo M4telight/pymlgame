@@ -82,6 +82,8 @@ class Controller(object):
         self.screen.blit(bg, pygame.rect.Rect(0, 0, 128, 113))
         pygame.display.flip()
 
+        self.clock = pygame.time.Clock()
+
         self.keys = [0 for _ in range(14)]
         self.mapping = {pygame.K_UP: 0,      # Up
                         pygame.K_DOWN: 1,    # Down
@@ -97,6 +99,7 @@ class Controller(object):
                         pygame.K_1: 11,      # L2
                         pygame.K_e: 12,      # R1
                         pygame.K_3: 13}      # R2
+        self.key_pressed = False
 
         self.timeout = 0  # if the controller is in idle state a ping signal will be sent
         self.rumble_active = False
@@ -145,6 +148,13 @@ class Controller(object):
         if DEBUG: logging.info('playing media files not yet implemented')
         pass
 
+    def determine_key_states(self):
+        # check which keys are pressed and send them to the server
+        pressed_keys = pygame.key.get_pressed()
+        for key_name, key_id in self.mapping.items():
+            key_value = pressed_keys[key_name]
+            self.keys[key_id] = key_value
+
     def handle_inputs(self):
         if time.time() > self.timeout + 30:
             self.ping()
@@ -166,19 +176,18 @@ class Controller(object):
                     self.play_sound(event.filename)
                 elif event.type == E_RUMBLE:
                     self.rumble(event.duration)
-                elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-                    try:
-                        button = self.mapping[event.key]
-                        if event.type == pygame.KEYDOWN:
-                            self.keys[button] = 1
-                        elif event.type == pygame.KEYUP:
-                            self.keys[button] = 0
-                        self.send_keys()
-                    except KeyError:
-                        break
+                elif event.type == pygame.KEYDOWN:
+                    self.key_pressed = True
+                elif event.type == pygame.KEYUP:
+                    self.key_pressed = False
             else:
                 self.connect()
                 time.sleep(1)
+
+        if self.key_pressed:
+            self.determine_key_states()
+            self.send_keys()
+        self.clock.tick(15)
 
 
 if __name__ == '__main__':
