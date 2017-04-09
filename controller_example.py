@@ -182,7 +182,15 @@ class Controller(object):
 
 
 if __name__ == '__main__':
-    ctlr = Controller('127.0.0.1', 1338, '0.0.0.0', 1339)
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Simple Keyboard Controller for pymlgame')
+    parser.add_argument('--host', default='localhost', help='host to connect to [default: localhost]')
+    parser.add_argument('--port', type=int, default=1338, help='default port for receiver [default" 1339]')
+
+    args = parser.parse_args()
+
+    ctlr = Controller(args.host, args.port, '0.0.0.0', 1339)
     try:
         while True:
             ctlr.handle_inputs()
