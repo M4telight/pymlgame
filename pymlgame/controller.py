@@ -11,7 +11,7 @@ import socket
 from queue import Queue
 from threading import Thread
 
-from pymlgame.locals import E_NEWCTLR, E_DISCONNECT, E_PING, E_KEYUP, E_KEYDOWN, E_MESSAGE, E_RUMBLE
+from pymlgame.locals import E_NEWCTLR, E_DISCONNECT, E_PING, E_KEYUP, E_KEYDOWN, E_KEYPRESSED, E_MESSAGE, E_RUMBLE
 from pymlgame.event import Event
 
 
@@ -118,18 +118,22 @@ class Controller(Thread):
         """
         #TODO: use try and catch all exceptions
         # test if uid exists
-        if self.controllers[uid]:
+        if self.controllers.get(uid, None):
             # test if states have correct lenght
             if len(states) == 14:
                 old_states = self.controllers[uid][2]
-                if old_states != states:
-                    for key in range(14):
-                        if int(old_states[key]) > int(states[key]):
-                            e = Event(uid, E_KEYUP, key)
-                            self.queue.put_nowait(e)
-                        elif int(old_states[key]) < int(states[key]):
-                            e = Event(uid, E_KEYDOWN, key)
-                            self.queue.put_nowait(e)
+                for key in range(14):
+                    old_state = int(old_states[key])
+                    current_state = int(states[key])
+                    if old_state > current_state:
+                        e = Event(uid, E_KEYUP, key)
+                        self.queue.put_nowait(e)
+                    elif old_state < current_state:
+                        e = Event(uid, E_KEYDOWN, key)
+                        self.queue.put_nowait(e)
+                    elif old_state == 1 and current_state == 1:
+                        e = Event(uid, E_KEYPRESSED, key)
+                        self.queue.put_nowait(e)
                 self.controllers[uid][2] = states
             self.controllers[uid][3] = time.time()
 
