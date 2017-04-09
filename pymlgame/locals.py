@@ -12,6 +12,7 @@ E_PING = 3
 E_DISCONNECT = 4
 E_MESSAGE = 5
 E_RUMBLE = 6
+E_KEYPRESSED = 7
 
 # controller inputs
 CTLR_UP = 0
