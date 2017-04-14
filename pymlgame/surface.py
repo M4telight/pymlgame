@@ -138,7 +138,7 @@ class Surface(object):
             for y in range(surface.height):
                 px = x + pos[0]
                 py = y + pos[1]
-                if 0 < px < self.width and 0 < py < self.height:
+                if 0 <= px < self.width and 0 <= py < self.height:
                     self.matrix[px][py] = surface.matrix[x][y]
 
     def replace_color(self, before, after):
